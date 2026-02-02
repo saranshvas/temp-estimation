@@ -87,6 +87,111 @@ Signal Processing:
 
 Display: Real-time temperature output on 16x2 LCD.
 
+
+# Algorithm
+
+Step 1: System Initialization
+
+1. Configure microcontroller I/O pins for ultrasonic trigger and echo.
+
+2. Initialize the LCD for real-time display.
+
+3. Initialize velocity and temperature values to ensure stable startup behavior.
+
+Step 2: Ultrasonic Pulse Transmission
+
+1. Generate a fixed-width trigger pulse (10 µs) to initiate ultrasonic transmission.
+
+2. Allow the ultrasonic wave to propagate toward a fixed reflector.
+
+Allow the ultrasonic wave to propagate toward a fixed reflector.
+
+```c
+void send_trigger() {
+    TRIG = 1;
+    delay_us(10);
+    TRIG = 0;
+}
+```
+
+Step 3: Time-of-Flight Measurement
+
+1. Wait for the echo signal to go HIGH.
+
+2. Measure the duration for which the echo signal remains HIGH using a hardware timer.
+
+3. Stop the timer when the echo signal goes LOW.
+
+4. Apply a timeout condition to prevent indefinite blocking.
+
+```c
+while (ECHO == 0);
+TCNT1 = 0;
+
+while (ECHO == 1 && count < 60000) {
+    count = TCNT1;
+}
+```
+Step 4: Velocity Computation
+
+1. Convert the measured time-of-flight into ultrasonic propagation velocity.
+
+2. Reject invalid measurements caused by missed echoes or spurious reflections.
+
+```c
+if (time > 200 && time < 60000) {
+    velocity = (2 * 100) / (time * 0.5 * 0.0001);
+}
+```
+Step 5: Multi-Sample Averaging
+
+1. Repeat the velocity measurement multiple times under identical conditions.
+
+2. ccumulate only valid velocity values.
+
+3. Compute the average velocity to reduce random timing jitter.
+
+```c
+float sum = 0;
+int valid_readings = 0;
+
+for (int i = 0; i < 200; i++) {
+    send_trigger();
+    time = measure_pulse();
+
+    if (time > 200 && time < 60000) {
+        sum += velocity;
+        valid_readings++;
+    }
+}
+
+velocity = sum / valid_readings;
+```
+Step 6: Exponential Smoothing (Temporal Stabilization)
+
+1. Combine the newly computed value with the previous estimate.
+
+2. Update the output gradually instead of instantaneously.
+```c
+float smooth_value(float new_value, float old_value) {
+    return (0.9 * old_value) + (0.1 * new_value);
+}
+```
+
+This smoothing is applied to both velocity and temperature estimates.
+
+Step 7: Temperature Estimation
+
+1. Estimate ambient temperature from the stabilized ultrasonic velocity using a linear acoustic model.
+```c
+temperature = (velocity - 331.4) / 0.606;
+```
+Step 8: Display and Update
+
+1. Display stabilized velocity and temperature values on the LCD.
+
+2. Introduce a fixed delay before the next update cycle to maintain steady output.
+   
  
 # 📈 Key Results
 
