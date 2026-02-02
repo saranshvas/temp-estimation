@@ -33,6 +33,17 @@ If you use this code, data, or methodology in academic or research work, please 
 
 4. Provide a low-cost, reproducible platform for educational and research applications.
 
+
+# How to Use
+
+1. Compile the code using CodeVisionAVR for ATmega16A.
+2. Connect HC-SR04:
+   - TRIG → PD0
+   - ECHO → PD1
+3. Place a flat reflector at 100 cm from the sensor.
+4. Power the system and observe velocity and temperature on the LCD.
+
+
 # ⚙️ Hardware Components
 
 | Component         | Model / Specs           | Purpose                                |
