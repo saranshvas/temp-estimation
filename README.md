@@ -1,40 +1,26 @@
 # Development of a Device for Estimation of Ambient Temperature by Measuring Ultrasonic Propagation Velocity in Air
+
+### Authors
+
 Saransh<sup>1,</sup><sup>2</sup><sup>*</sup>, Nitin Dhiman<sup>2,</sup><sup>3</sup>, and P.K. Dubey<sup>2,</sup><sup>3</sup>
 
-¹ Department of Electronics Engineering, J.C. Bose University of Science and Technology, YMCA Faridabad, India
+¹ Department of Electronics Engineering, J.C. Bose University of Science and Technology, YMCA, Faridabad, India
 
 ² Pressure, Vacuum and Ultrasonic Metrology, Division of Physico-Mechanical Metrology, CSIR-National Physical Laboratory, New Delhi, India
 
 ³ Academy of Scientific and Innovative Research (AcSIR), Ghaziabad, India
 
-\* Corresponding Author; e-mail: saransh.vas@gmail.com
 
-
-# 🏛️ Overview
-
-This project presents a low-cost, contactless system for ambient temperature estimation developed at CSIR-NPL, New Delhi, under Prof. P.K. Dubey.
+## Overview
 
 The system measures ultrasonic time-of-flight (TOF) with an HC-SR04 sensor and an ATmega16A microcontroller, calculates the ultrasonic propagation velocity in air, and estimates temperature with high precision (±0.4 °C). Results are displayed in real-time via a 16x2 LCD, demonstrating repeatable and reliable measurements suitable for laboratory and industrial applications.
 
-Publication: In proceedings of International Conference on Ultrasonics and Materials Science for Advanced Technology (ICUMSAT-2025) held on 21-23 Jan 2026, Chennai, India.
+🎉 Accepted: In proceedings of International Conference on Ultrasonics and Materials Science for Advanced Technology (ICUMSAT-2025)
+
+📄 Paper : https://www.researchgate.net/publication/400065300_Development_of_a_Device_for_Estimation_of_Ambient_Temperature_by_Measuring_Ultrasonic_Propagation_Velocity_in_Air
 
 
-# Citation
-If you use this code, data, or methodology in academic or research work, please cite: https://www.researchgate.net/publication/400065300_Development_of_a_Device_for_Estimation_of_Ambient_Temperature_by_Measuring_Ultrasonic_Propagation_Velocity_in_Air
-
-
-# 🎯 Objectives
-
-1. Design a contactless, robust temperature estimation device.
- 
-2. Achieve high-precision measurements using ultrasonic TOF.
-
-3. Implement signal processing to minimize measurement jitter.
-
-4. Provide a low-cost, reproducible platform for educational and research applications.
-
-
-# How to Use
+## Quick Start
 
 1. Compile the code using CodeVisionAVR for ATmega16A.
 2. Connect HC-SR04:
@@ -44,87 +30,45 @@ If you use this code, data, or methodology in academic or research work, please 
 4. Power the system and observe velocity and temperature on the LCD.
 
 
-# ⚙️ Hardware Components
+## System Architecture and Hardware Components
 
-| Component         | Model / Specs           | Purpose                                |
-| ----------------- | ----------------------- | -------------------------------------- |
-| Microcontroller   | ATmega16A               | Timing measurement & control           |
-| Ultrasonic Sensor | HC-SR04                 | Pulse emission and echo detection      |
-| Reflector         | 100 cm calibrated plate | Fixed acoustic path                    |
-| Display           | 16x2 LCD                | Real-time temperature output           |
-| Miscellaneous     | PCB + jumper wires      | Signal conditioning & mechanical setup |
+The device is built using a compact, embedded setup optimized for high-precision ultrasonic temperature measurement. Each component is carefully selected to ensure accuracy, repeatability, and real-time performance.
 
-
-# 🔬 Methodology
-
-Ultrasonic Pulse Emission: HC-SR04 emits a 10 µs pulse toward a fixed 100 cm reflector.
-
-Time-of-Flight Measurement: ATmega16A measures round-trip time digitally.
-
-Velocity Calculation:
-
-       c = 2d / t ​
-
-where 
-c is the velocity of sound in air in m/s
-
-d = reflector distance in m, 
-
-t = TOF in sec
-
-Temperature Estimation:
-
-        c = 331.4 + 0.606 T
-
-where 
-where, c is the velocity of sound in air in m/s, 331.4 m/s is the velocity of sound at 0°C, 0.606 is the temperature coefficient, indicating how sound speed increases per degree rise in temperature, T is the ambient temperature in °C.
-
-Signal Processing:
-    
-   1. 200-sample averaging to reduce random jitter
-
-   2. 10 ms inter-sample delay to prevent residual echo interference
-
-Display: Real-time temperature output on 16x2 LCD.
+| Component           | Model / Specs                 | Purpose |
+|--------------------|-------------------------------|---------|
+| Microcontroller     | ATmega16A                     | Timing, TOF calculation, and system control |
+| Ultrasonic Sensor   | HC-SR04                        | Pulse emission & echo detection |
+| Acoustic Reflector  | Square Block, e.g., 30×30×2 cm | Fixed propagation path for velocity measurement |
+| Display             | 16x2 LCD                       | Real-time velocity & temperature display |
+| Programmer          | USBasp                         | Microcontroller flashing and programming |
+| Oscilloscope        | Generic / Tektronix            | Signal monitoring and waveform verification |
+| Spectrum Analyzer   | Generic                        | Frequency-domain analysis of ultrasonic signals |
+| Digital Multimeter  | DMM (Multimeter)               | Voltage, current, and continuity measurements |
+| Supporting Hardware | PCB, jumper wires              | Signal conditioning, mechanical integration, and stable interfacing |
 
 
-# Algorithm
+## Our Method
 
-### Step 1: System Initialization
+### 1. Ultrasonic Pulse Emission and TOF Measurement
+1. The HC-SR04 emits a 10 µs ultrasonic pulse toward a fixed reflector.
 
-1. Configure microcontroller I/O pins for ultrasonic trigger and echo.
+2. The ATmega16A measures the round-trip time 𝑡 digitally using a hardware timer.
 
-2. Initialize the LCD for real-time display.
+3. The ultrasonic velocity 𝑐 is computed using:
+```
+    c = 2d / t
+```
+​
+where 𝑑 = 1m is the reflector distance.
 
-3. Initialize velocity and temperature values to ensure stable startup behavior.
-
-### Step 2: Ultrasonic Pulse Transmission
-
-1. Generate a fixed-width trigger pulse (10 µs) to initiate ultrasonic transmission.
-
-2. Allow the ultrasonic wave to propagate toward a fixed reflector.
-
-Allow the ultrasonic wave to propagate toward a fixed reflector.
-
+4. Invalid measurements caused by missed echoes or spurious reflections are discarded.
 ```c
 void send_trigger() {
     TRIG = 1;
     delay_us(10);
     TRIG = 0;
 }
-```
 
-### Step 3: Time-of-Flight Measurement
-
-1. Wait for the echo signal to go HIGH.
-
-2. Measure the duration for which the echo signal remains HIGH using a hardware timer.
-
-3. Stop the timer when the echo signal goes LOW.
-
-4. Apply a timeout condition to prevent indefinite blocking.
-
-```c
 while (ECHO == 0);
 TCNT1 = 0;
 
@@ -132,92 +76,97 @@ while (ECHO == 1 && count < 60000) {
     count = TCNT1;
 }
 ```
-### Step 4: Velocity Computation
+### 2. Multi-Sample Averaging and Temporal Stabilization
 
-1. Convert the measured time-of-flight into ultrasonic propagation velocity.
+1. To reduce random jitter and enhance measurement reliability, multi-sample averaging is applied over 200 valid velocity readings.
 
-2. Reject invalid measurements caused by missed echoes or spurious reflections.
+2. Only valid measurements are accumulated to compute the average ultrasonic velocity.
 
-```c
-if (time > 200 && time < 60000) {
-    velocity = (2 * 100) / (time * 0.5 * 0.0001);
-}
-```
-### Step 5: Multi-Sample Averaging
+3. Temporal stabilization is applied using exponential smoothing:
 
-1. Repeat the velocity measurement multiple times under identical conditions.
-
-2. ccumulate only valid velocity values.
-
-3. Compute the average velocity to reduce random timing jitter.
-
+   𝑣<sub>smoothed</sub> = 0.9⋅𝑣<sub>old</sub> + 0.1⋅𝑣<sub>new</sub>
 ```c
 float sum = 0;
 int valid_readings = 0;
-
 for (int i = 0; i < 200; i++) {
     send_trigger();
     time = measure_pulse();
-
     if (time > 200 && time < 60000) {
         sum += velocity;
         valid_readings++;
     }
 }
-
 velocity = sum / valid_readings;
-```
-### Step 6: Exponential Smoothing (Temporal Stabilization)
 
-1. Combine the newly computed value with the previous estimate.
-
-2. Update the output gradually instead of instantaneously.
-```c
 float smooth_value(float new_value, float old_value) {
     return (0.9 * old_value) + (0.1 * new_value);
 }
 ```
+### 3. Temperature Estimation
 
-This smoothing is applied to both velocity and temperature estimates.
-
-### Step 7: Temperature Estimation
-
-1. Estimate ambient temperature from the stabilized ultrasonic velocity using a linear acoustic model.
-```c
-temperature = (velocity - 331.4) / 0.606;
+   The ambient temperature 𝑇 is estimated from the smoothed ultrasonic velocity using the linear acoustic model:
 ```
-### Step 8: Display and Update
+c = 331.4 + 0.606 T
+```
+​
+where 331.4 m/s is the speed of sound at 0 °C, and 0.606 m/s per °C is the temperature coefficient.
 
-1. Display stabilized velocity and temperature values on the LCD.
+### 4. Display and Update
 
-2. Introduce a fixed delay before the next update cycle to maintain steady output.
-   
- 
-# 📈 Key Results
+1. Real-time temperature and velocity values are displayed on a 16x2 LCD.
 
-1. High-Precision Temperature Estimation: ±0.4 °C uncertainty achieved using ultrasonic propagation velocity.
+2. A fixed inter-sample delay (10 ms) prevents interference from residual echoes.
 
-2. Effective Signal Processing: Averaging and timing synchronization minimized environmental noise and sensor fluctuations.
-
-3. Robust Embedded Implementation: Stable, repeatable measurements via ATmega16A + HC-SR04 + reflector.
-
-4. Practical Applicability: Non-contact, low-cost, reliable ambient temperature estimation suitable for lab and industrial use.
-
-5. Foundation for Future Innovations: Framework for advanced ultrasonic sensing in environmental monitoring, assistive technology, and precision instrumentation.
-
-6. Real-World Impact: Reduces manual errors and enhances safety and efficiency in sensitive environments.
+3. This implementation ensures stable, repeatable, and high-precision measurements (±0.4 °C).
 
 
-# 🛠️ Features
+## Understanding the Evaluation Metrics
 
-1. Contactless temperature measurement
+To assess the performance of our ultrasonic temperature measurement device, we compared it against the National Physical Laboratory (NPL) calibrated temperature standard. We focus on two key aspects of measurement quality: accuracy and stability.
 
-2. Microcontroller-based digital TOF processing
+### 1. Measurement Accuracy
 
-3. Reproducible PCB setup
+Definition: The difference between the temperature measured by our device and the NPL reference.
 
-4. Averaging for jitter reduction
+Goal: Minimize the deviation to ensure highly precise readings.
 
-5. Real-time LCD display
+Interpretation: Smaller deviation indicates higher accuracy and closer adherence to the national standard.
 
-6. Open-source code for educational and research use
+### 2. Measurement Stability
+
+Definition: The consistency of repeated temperature measurements over time under identical conditions.
+
+Goal: Achieve minimal fluctuation between successive readings.
+
+Interpretation: Lower variance indicates better stability and reliability of the device.
+
+## Key Takeaways
+
+1. High Accuracy: Our device consistently measures temperature within ±0.4 °C of the NPL standard, demonstrating precise calibration.
+
+2. High Stability: Multi-sample averaging and temporal smoothing reduce jitter, ensuring repeatable, reliable readings.
+
+3. Overall Performance: The ideal device combines both high accuracy and stability, providing a trustworthy, contactless, and low-cost temperature measurement solution.
+
+
+## Availabale Methods
+
+1. contact_sensors – Thermistors or RTDs; require physical contact, slower response in air.
+
+2. single_tof_ultrasonic – Existing ultrasonic approaches; rely on single-sample TOF, higher uncertainty.
+
+3. wireless_iot – Distributed monitoring using wireless sensors; needs calibration and network setup.
+
+4. infrared_optical – Non-contact IR/optical sensors; sensitive to emissivity and environmental factors.
+
+
+## Citation
+```bib
+@inproceedings{inproceedings,
+author = {., Saransh and Dhiman, Nitin and Dubey, P. K.},
+year = {2026},
+month = {01},
+pages = {},
+title = {Development of a Device for Estimation of Ambient Temperature by Measuring Ultrasonic Propagation Velocity in Air}
+}
+```
