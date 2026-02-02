@@ -90,7 +90,7 @@ Display: Real-time temperature output on 16x2 LCD.
 
 # Algorithm
 
-Step 1: System Initialization
+### Step 1: System Initialization
 
 1. Configure microcontroller I/O pins for ultrasonic trigger and echo.
 
@@ -98,7 +98,7 @@ Step 1: System Initialization
 
 3. Initialize velocity and temperature values to ensure stable startup behavior.
 
-Step 2: Ultrasonic Pulse Transmission
+### Step 2: Ultrasonic Pulse Transmission
 
 1. Generate a fixed-width trigger pulse (10 µs) to initiate ultrasonic transmission.
 
@@ -114,7 +114,7 @@ void send_trigger() {
 }
 ```
 
-Step 3: Time-of-Flight Measurement
+### Step 3: Time-of-Flight Measurement
 
 1. Wait for the echo signal to go HIGH.
 
@@ -132,7 +132,7 @@ while (ECHO == 1 && count < 60000) {
     count = TCNT1;
 }
 ```
-Step 4: Velocity Computation
+### Step 4: Velocity Computation
 
 1. Convert the measured time-of-flight into ultrasonic propagation velocity.
 
@@ -143,7 +143,7 @@ if (time > 200 && time < 60000) {
     velocity = (2 * 100) / (time * 0.5 * 0.0001);
 }
 ```
-Step 5: Multi-Sample Averaging
+### Step 5: Multi-Sample Averaging
 
 1. Repeat the velocity measurement multiple times under identical conditions.
 
@@ -167,7 +167,7 @@ for (int i = 0; i < 200; i++) {
 
 velocity = sum / valid_readings;
 ```
-Step 6: Exponential Smoothing (Temporal Stabilization)
+### Step 6: Exponential Smoothing (Temporal Stabilization)
 
 1. Combine the newly computed value with the previous estimate.
 
@@ -180,13 +180,13 @@ float smooth_value(float new_value, float old_value) {
 
 This smoothing is applied to both velocity and temperature estimates.
 
-Step 7: Temperature Estimation
+### Step 7: Temperature Estimation
 
 1. Estimate ambient temperature from the stabilized ultrasonic velocity using a linear acoustic model.
 ```c
 temperature = (velocity - 331.4) / 0.606;
 ```
-Step 8: Display and Update
+### Step 8: Display and Update
 
 1. Display stabilized velocity and temperature values on the LCD.
 
