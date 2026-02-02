@@ -9,7 +9,8 @@ Saransh<sup>1,</sup><sup>2</sup><sup>*</sup>, Nitin Dhiman<sup>2,</sup><sup>3</s
 
 \* Corresponding Author; e-mail: saransh.vas@gmail.com
 
-🏛️ Overview
+
+# 🏛️ Overview
 
 This project presents a low-cost, contactless system for ambient temperature estimation developed at CSIR-NPL, New Delhi, under Prof. P.K. Dubey.
 
@@ -17,11 +18,12 @@ The system measures ultrasonic time-of-flight (TOF) with an HC-SR04 sensor and a
 
 Publication: In proceedings of International Conference on Ultrasonics and Materials Science for Advanced Technology (ICUMSAT-2025) held on 21-23 Jan 2026, Chennai, India.
 
-## Citation
+
+# Citation
 If you use this code, data, or methodology in academic or research work, please cite: https://www.researchgate.net/publication/400065300_Development_of_a_Device_for_Estimation_of_Ambient_Temperature_by_Measuring_Ultrasonic_Propagation_Velocity_in_Air
 
 
-🎯 Objectives
+# 🎯 Objectives
 
 1. Design a contactless, robust temperature estimation device.
  
@@ -31,7 +33,7 @@ If you use this code, data, or methodology in academic or research work, please 
 
 4. Provide a low-cost, reproducible platform for educational and research applications.
 
-⚙️ Hardware Components
+# ⚙️ Hardware Components
 
 | Component         | Model / Specs           | Purpose                                |
 | ----------------- | ----------------------- | -------------------------------------- |
@@ -41,7 +43,8 @@ If you use this code, data, or methodology in academic or research work, please 
 | Display           | 16x2 LCD                | Real-time temperature output           |
 | Miscellaneous     | PCB + jumper wires      | Signal conditioning & mechanical setup |
 
-🔬 Methodology
+
+# 🔬 Methodology
 
 Ultrasonic Pulse Emission: HC-SR04 emits a 10 µs pulse toward a fixed 100 cm reflector.
 
@@ -73,7 +76,8 @@ Signal Processing:
 
 Display: Real-time temperature output on 16x2 LCD.
 
-📈 Key Results
+ 
+# 📈 Key Results
 
 1. High-Precision Temperature Estimation: ±0.4 °C uncertainty achieved using ultrasonic propagation velocity.
 
@@ -87,7 +91,8 @@ Display: Real-time temperature output on 16x2 LCD.
 
 6. Real-World Impact: Reduces manual errors and enhances safety and efficiency in sensitive environments.
 
-🛠️ Features
+
+# 🛠️ Features
 
 1. Contactless temperature measurement
 
